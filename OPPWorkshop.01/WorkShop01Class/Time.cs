@@ -1,113 +1,101 @@
 ﻿using System;
 using System.Globalization;
 
-namespace WorkShop01Class;
+namespace WorkShop01.Backend;
 
 public class Time
 {
+    // Fields
     private int _hour;
-    private int _millisecond;
     private int _minute;
     private int _second;
+    private int _millisecond;
 
-    // 1) sin parámetros
-    public Time() : this(0, 0, 0, 0) { }
+    // Constructors
+    public Time()
+    {
+        _hour = 0;
+        _minute = 0;
+        _second = 0;
+        _millisecond = 0;
+    }
 
-    // 2) con horas
-    public Time(int hour) : this(hour, 0, 0, 0) { }
+    public Time(int hour)
+    {
+        Hour = hour;
+        Minute = 0;
+        Second = 0;
+        Millisecond = 0;
+    }
 
-    // 3) con horas y minutos
-    public Time(int hour, int minute) : this(hour, minute, 0, 0) { }
+    public Time(int hour, int minute)
+    {
+        Hour = hour;
+        Minute = minute;
+        Second = 0;
+        Millisecond = 0;
+    }
 
-    // 4) con horas, minutos y segundos
-    public Time(int hour, int minute, int second) : this(hour, minute, second, 0) { }
+    public Time(int hour, int minute, int second)
+    {
+        Hour = hour;
+        Minute = minute;
+        Second = second;
+        Millisecond = 0;
+    }
 
-    // 5) con horas, minutos, segundos y milisegundos
     public Time(int hour, int minute, int second, int millisecond)
     {
-        ValidateRange(hour, minute, second, millisecond);
-        _hour = hour;
-        _minute = minute;
-        _second = second;
-        _millisecond = millisecond;
+        Hour = hour;
+        Minute = minute;
+        Second = second;
+        Millisecond = millisecond;
     }
 
-    // Validaciones con mensajes que coinciden con el ejemplo de la profe
-    private static void ValidateRange(int hour, int minute, int second, int millisecond)
-    {
-        if (hour < 0 || hour > 23)
-            throw new ArgumentException($"The hour: {hour}, is not valid.");
-        if (minute < 0 || minute > 59)
-            throw new ArgumentException($"The minute: {minute}, is not valid.");
-        if (second < 0 || second > 59)
-            throw new ArgumentException($"The second: {second}, is not valid.");
-        if (millisecond < 0 || millisecond > 999)
-            throw new ArgumentException($"The millisecond: {millisecond}, is not valid.");
-    }
-
+    // Properties (usan validadores privados al estilo del profe)
     public int Hour
     {
         get => _hour;
-        set
-        {
-            if (value < 0 || value > 23)
-                throw new ArgumentException($"The hour: {value}, is not valid.");
-            _hour = value;
-        }
-    }
-
-    public int Millisecond
-    {
-        get => _millisecond;
-        set
-        {
-            if (value < 0 || value > 999)
-                throw new ArgumentException($"The millisecond: {value}, is not valid.");
-            _millisecond = value;
-        }
+        set => _hour = ValidateHour(value);
     }
 
     public int Minute
     {
         get => _minute;
-        set
-        {
-            if (value < 0 || value > 59)
-                throw new ArgumentException($"The minute: {value}, is not valid.");
-            _minute = value;
-        }
+        set => _minute = ValidateMinute(value);
     }
 
     public int Second
     {
         get => _second;
-        set
-        {
-            if (value < 0 || value > 59)
-                throw new ArgumentException($"The second: {value}, is not valid.");
-            _second = value;
-        }
+        set => _second = ValidateSecond(value);
     }
 
-    // ---------- Métodos requeridos ----------
-    // ¡OJO! El nombre de tu Main usa "ToMiliseconds" (una sola 'l').
+    public int Millisecond
+    {
+        get => _millisecond;
+        set => _millisecond = ValidateMillisecond(value);
+    }
+
+    // Methods requeridos
+    // Nota: en tus capturas el nombre es "ToMiliseconds" (una sola 'l'); lo dejo así para que compile con tu Main.
     public long ToMiliseconds()
     {
-        return ((long)_hour * 3600 + (long)_minute * 60 + _second) * 1000 + _millisecond;
+        return ((long)Hour * 3600 + (long)Minute * 60 + Second) * 1000 + Millisecond;
     }
 
     public long ToSeconds()
     {
-        // Totales, sin decimales (como se ve en tu consola)
-        return ((long)_hour * 3600) + ((long)_minute * 60) + _second;
+        // Totales enteros (como en la salida)
+        return ((long)Hour * 3600) + ((long)Minute * 60) + Second;
     }
 
     public long ToMinutes()
     {
-        return ((long)_hour * 60) + _minute;
+        // Totales enteros (como en la salida)
+        return ((long)Hour * 60) + Minute;
     }
 
-    // ¿Pasa al siguiente día al sumar con 'other'?
     public bool IsOtherDay(Time other)
     {
         if (other is null) return false;
@@ -115,7 +103,7 @@ public class Time
         return (this.ToMiliseconds() + other.ToMiliseconds()) >= DayMs;
     }
 
-    // Suma con otro Time (incluyendo milisegundos) y hace wrap al día siguiente
+    // Suma teniendo en cuenta milisegundos y “wrap” al siguiente día
     public Time Add(Time other)
     {
         if (other is null) throw new ArgumentNullException(nameof(other));
@@ -132,20 +120,47 @@ public class Time
         return new Time(h, m, s, ms);
     }
 
-    // (Opcional) Suma h:m:s (sin ms), útil si tu Program llama Add(h,m,s)
-    public Time Add(int hoursToAdd, int minutesToAdd, int secondsToAdd)
+    // (Opcional) por si en tu Main usan Add(h, m, s)
+    public Time Add(int hours, int minutes, int seconds)
     {
-        var temp = new Time(hoursToAdd, minutesToAdd, secondsToAdd, 0);
+        var temp = new Time(hours, minutes, seconds, 0);
         return Add(temp);
     }
 
-    // Formato pedido: HH:MM:ss.mmm tt en NO militar (12h con AM/PM)
+    // ToString: “HH:MM:ss.mmm tt” en NO militar (12h con AM/PM), estilo de tu captura
     public override string ToString()
     {
-        // Usamos un DateTime "ficticio" para formatear a 12h
+        // 12h con AM/PM en mayúsculas; en-US asegura “AM/PM” y separador de miles con coma en el Main
         var dt = new DateTime(1, 1, 1, Hour, Minute, Second, Millisecond);
-        // "hh" = 12h, "tt" = AM/PM; en-US lo pone en mayúsculas
         return dt.ToString("hh':'mm':'ss'.'fff tt", CultureInfo.GetCultureInfo("en-US")).ToUpperInvariant();
     }
+
+    // ---------- Validadores privados (estilo clase Date del profe) ----------
+    private int ValidateHour(int hour)
+    {
+        if (hour < 0 || hour > 23)
+            throw new ArgumentException($"The hour: {hour}, is not valid.");
+        return hour;
+    }
+
+    private int ValidateMinute(int minute)
+    {
+        if (minute < 0 || minute > 59)
+            throw new ArgumentException($"The minute: {minute}, is not valid.");
+        return minute;
+    }
+
+    private int ValidateSecond(int second)
+    {
+        if (second < 0 || second > 59)
+            throw new ArgumentException($"The second: {second}, is not valid.");
+        return second;
+    }
+
+    private int ValidateMillisecond(int millisecond)
+    {
+        if (millisecond < 0 || millisecond > 999)
+            throw new ArgumentException($"The millisecond: {millisecond}, is not valid.");
+        return millisecond;
+    }
 }
-``

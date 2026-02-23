@@ -1,4 +1,4 @@
 <Solution>
-  <Project Path="Program/Program.csproj" Id="c4dead70-4433-4a32-823a-1e419fe20a5e" />
-  <Project Path="WorkShop01Class/WorkShop01Class.csproj" Id="681027d7-eb5f-4b17-b37e-37d11923f0be" />
+  <Project Path="Program/Program.Frontend.csproj" Id="c4dead70-4433-4a32-823a-1e419fe20a5e" />
+  <Project Path="WorkShop01Class/WorkShop01.Backend.csproj" Id="681027d7-eb5f-4b17-b37e-37d11923f0be" />
 </Solution>
