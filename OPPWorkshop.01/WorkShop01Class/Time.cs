@@ -79,7 +79,7 @@ public class Time
 
     // Methods requeridos
     // Nota: en tus capturas el nombre es "ToMiliseconds" (una sola 'l'); lo dejo así para que compile con tu Main.
-    public long ToMiliseconds()
+    public long ToMilliseconds()
     {
         return ((long)Hour * 3600 + (long)Minute * 60 + Second) * 1000 + Millisecond;
     }
@@ -100,15 +100,14 @@ public class Time
     {
         if (other is null) return false;
         const long DayMs = 24L * 3600 * 1000;
-        return (this.ToMiliseconds() + other.ToMiliseconds()) >= DayMs;
+        return (this.ToMilliseconds() + other.ToMilliseconds()) >= DayMs;
     }
 
     // Suma teniendo en cuenta milisegundos y “wrap” al siguiente día
     public Time Add(Time other)
     {
-        if (other is null) throw new ArgumentNullException(nameof(other));
         const long DayMs = 24L * 3600 * 1000;
-        long total = (this.ToMiliseconds() + other.ToMiliseconds()) % DayMs;
+        long total = (this.ToMilliseconds() + other.ToMilliseconds()) % DayMs;
 
         int h = (int)(total / 3_600_000L);
         total %= 3_600_000L;

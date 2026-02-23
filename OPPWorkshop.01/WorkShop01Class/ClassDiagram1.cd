@@ -3,7 +3,7 @@
   <Class Name="WorkShop01.Backend.Time">
     <Position X="6" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAIACAABAgCEACAEAAAiAAIEAAAAACIAAEAAAAAAAgI=</HashCode>
+      <HashCode>AAIACAAAAgCEACAEAAAiAAIEAAAIACIAAEAAAAAAAgI=</HashCode>
       <FileName>Time.cs</FileName>
     </TypeIdentifier>
   </Class>
